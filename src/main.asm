@@ -19,4 +19,4 @@ wait:
         jmp wait
 
 text:
-        !scr "              hello world               "
+        .text "              hello world               "

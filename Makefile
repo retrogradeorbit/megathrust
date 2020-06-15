@@ -4,11 +4,7 @@ BUILDPATH=build
 BUILD=megathrust.prg
 SOURCEPATH=src
 SOURCE=main.asm
-COMPILERPATH=compiler
-COMPILER=acme
-COMPILERREPORT=buildreport
-COMPILERSYMBOLS=symbols
-COMPILERARGS=-r $(BUILDPATH)/$(COMPILERREPORT) --vicelabels $(BUILDPATH)/$(COMPILERSYMBOLS) --msvc --color --format cbm -v3 --outfile
+
 CRUNCHERPATH=cruncher
 CRUNCHER=pucrunch
 # after cruncher finishes, sets $01 to val $37
@@ -27,7 +23,7 @@ clean:
 
 compile:
 	-mkdir $(BUILDPATH)
-	$(COMPILERPATH)/$(COMPILER) $(COMPILERARGS) $(BUILDPATH)/$(BUILD) $(SOURCEPATH)/$(SOURCE)
+	java -jar compiler/KickAss.jar -vicesymbols -o build/megathrust.prg src/main.asm
 
 crunch:
 	$(CRUNCHERPATH)/$(CRUNCHER) $(CRUNCHERARGS) $(BUILDPATH)/$(BUILD) $(BUILDPATH)/$(BUILD)
