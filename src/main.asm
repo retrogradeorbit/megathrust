@@ -24,9 +24,14 @@ start:
         lda #>irq1
         sta irq_high
 
-        lda #%00000001
+        // turn of CIA1 and CIA2 interrupts
+        lda #%01111111
         sta irq_control
         sta nmi_control
+
+        // ack CIA1 and CIA2
+        lda irq_control
+        lda nmi_control
 
         lda #%00000001
         sta interrupt_control
