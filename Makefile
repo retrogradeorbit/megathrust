@@ -6,12 +6,12 @@ CRUNCHERARGS=-x0x0801 -c64 -g0x37 -fshort
 EMULATORARGS=
 
 
-all: compile crunch run
+all: process-images compile run
 
 clean:
 	rm -rf build
 
-compile: build/megathrust-full.prg
+compile: build/megathrust.prg
 
 build/megathrust-full.prg: src/main.asm
 	-mkdir build
