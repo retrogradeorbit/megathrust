@@ -5,10 +5,13 @@ CRUNCHERARGS=-x0x0801 -c64 -g0x37 -fshort
 
 EMULATORARGS=
 
+
 all: compile crunch run
 
 clean:
 	rm -rf build
+
+compile: build/megathrust-full.prg
 
 build/megathrust-full.prg: src/main.asm
 	-mkdir build
@@ -19,3 +22,18 @@ build/megathrust.prg: build/megathrust-full.prg
 
 run: build/megathrust.prg
 	emulator/x64 $(EMULATORARGS) build/megathrust.prg
+
+run-full: build/megathrust-full.prg
+	emulator/x64 $(EMULATORARGS) build/megathrust-full.prg
+
+# debugger
+# ll "build/main.vs"
+# shl
+# (C:$e5cf) break .start
+# BREAK: 1  C:$0801  (Stop on exec)
+
+#(C:$e5cf) g .start
+#1 (Stop on  exec 0801)  000 009
+#.C:0801  33 08       RLA ($08),Y    - A:00 X:00 Y:0A SP:f2 ..-...Z.   96019569
+
+# step into (z), and step over (n)
