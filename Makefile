@@ -26,6 +26,9 @@ run: build/megathrust.prg
 run-full: build/megathrust-full.prg
 	x64 $(EMULATORARGS) build/megathrust-full.prg
 
+process-images:
+	cd process && lein run
+
 # debugger
 # ll "build/main.vs"
 # shl
