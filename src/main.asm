@@ -73,6 +73,10 @@ clr_loop:
 music:
         .import binary "music/Rob_Hubbard_Remix.sid",$7e
 
+        *=$3800 "charmap 01"
+charmap_01:
+        .import binary "gfx/charmap-01.bin"
+
 .macro SetBorderColor(color) {
         lda #color
         sta $d020
