@@ -54,11 +54,25 @@ start:
         cli
         jmp *
 
-irq1:   asl interrupt_status
+irq1:
+        //pha
+        //txa
+        //pha
+        //tya
+        //pha
+
+        asl interrupt_status
         SetBorderColor(2)
         jsr music+3
         SetBorderColor(0)
-        jmp normal_interrupt_no_keyboard_scan
+
+        pla
+        tay
+        pla
+        tax
+        pla
+
+        rti
 
 clear_screen:
         lda #$00
