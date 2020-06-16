@@ -8,12 +8,19 @@
         .var interrupt_status = $d019
         .var vic_memory_setup = $d018
 
+        .var border_colour = $d020
+        .var screen_colour = $d021
+
+
         // kernel
         .var normal_interrupt = $ea31
         .var normal_interrupt_no_keyboard_scan = $ea81
 
         * = $0801 "Main Program"
 start:
+        // lda #$35
+        // sta $01
+
         SetScreenAndBorderColor($00)
         lda #$00
         jsr music
@@ -53,11 +60,11 @@ start:
         jmp *
 
 irq1:
-        //pha
-        //txa
-        //pha
-        //tya
-        //pha
+        // pha
+        // txa
+        // pha
+        // tya
+        // pha
 
         lda #$ff
         sta interrupt_status
@@ -65,6 +72,60 @@ irq1:
         SetBorderColor(2)
         jsr music+3
         SetBorderColor(0)
+
+        // next interrupt
+        lda #<irq2
+        sta irq_low
+        lda #>irq2
+        sta irq_high
+
+        lda #8*12+4
+        sta raster_line
+
+        pla
+        tay
+        pla
+        tax
+        pla
+
+        rti
+
+irq2:
+        // pha
+        // txa
+        // pha
+        // tya
+        // pha
+
+        lda #$ff
+        sta interrupt_status
+
+        ldx raster_line
+        cpx #$91
+        bpl reset_irq
+
+        inc raster_line
+        inc screen_colour
+
+        pla
+        tay
+        pla
+        tax
+        pla
+
+        rti
+
+reset_irq:
+        lda #<irq1
+        sta irq_low
+        lda #>irq1
+        sta irq_high
+
+        lda #$00
+        sta raster_line
+
+        lda #$00
+        sta screen_colour
 
         pla
         tay
