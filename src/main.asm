@@ -48,8 +48,6 @@ start:
         lda #$00
         sta raster_line
 
-        lda irq_control
-        lda nmi_control
         asl interrupt_status
         cli
         jmp *
@@ -61,7 +59,9 @@ irq1:
         //tya
         //pha
 
-        asl interrupt_status
+        lda #$ff
+        sta interrupt_status
+        //asl interrupt_status
         SetBorderColor(2)
         jsr music+3
         SetBorderColor(0)

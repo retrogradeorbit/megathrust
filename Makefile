@@ -1,8 +1,8 @@
 # after cruncher finishes, sets $01 to val $37
 #CRUNCHERARGS=-x0x0801 -c64 -g0x37 -fshort
 
-# all banks are RAM (no rom)
-CRUNCHERARGS=-x0x0801 -c64 -g0x30 -fshort
+# only 0x37 works
+CRUNCHERARGS=-x0x0801 -c64 -g0x37 -fshort
 
 EMULATORARGS=
 
