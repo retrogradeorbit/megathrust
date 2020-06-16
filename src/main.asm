@@ -11,7 +11,6 @@
         .var border_colour = $d020
         .var screen_colour = $d021
 
-
         // kernel
         .var normal_interrupt = $ea31
         .var normal_interrupt_no_keyboard_scan = $ea81
@@ -57,6 +56,7 @@ start:
 
         asl interrupt_status
         cli
+
         jmp *
 
 irq1:
@@ -66,9 +66,6 @@ irq1:
         // tya
         // pha
 
-        lda #$ff
-        sta interrupt_status
-        //asl interrupt_status
         SetBorderColor(2)
         jsr music+3
         SetBorderColor(0)
@@ -79,8 +76,11 @@ irq1:
         lda #>irq2
         sta irq_high
 
-        lda #8*12+4
+        lda #99
         sta raster_line
+
+        // ack interrupt
+        inc interrupt_status
 
         pla
         tay
@@ -91,21 +91,28 @@ irq1:
         rti
 
 irq2:
-        // pha
-        // txa
-        // pha
-        // tya
-        // pha
-
-        lda #$ff
-        sta interrupt_status
-
-        ldx raster_line
-        cpx #$91
-        bpl reset_irq
-
-        inc raster_line
-        inc screen_colour
+        lda #101
+        sta raster_line
+        lda #<irq3
+        sta irq_low
+        lda #>irq3
+        sta irq_high
+        // ack interrupt
+        inc interrupt_status
+        cli
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
 
         pla
         tay
@@ -115,7 +122,69 @@ irq2:
 
         rti
 
-reset_irq:
+irq3:
+        nop            // 2 cycles each
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+
+        bit $00        // 3 cycles
+        lda raster_line
+        cmp #101
+        beq next_instr
+
+next_instr:
+        // now we are cycle exact
+        //sei
+        ldx #$00
+        ldy #$00
+colour_bar_loop:
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+
+        inx
+        stx screen_colour
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        lda #$00
+        sta screen_colour
+
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        // raster change here
+        nop
+        nop
+
+        iny
+        cpy #$30
+        bmi colour_bar_loop
+
+        lda #$00
+        sta screen_colour
+
+        //cli
+
+        inc interrupt_status
+
         lda #<irq1
         sta irq_low
         lda #>irq1
@@ -124,8 +193,7 @@ reset_irq:
         lda #$00
         sta raster_line
 
-        lda #$00
-        sta screen_colour
+
 
         pla
         tay
