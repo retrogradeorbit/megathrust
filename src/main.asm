@@ -6,6 +6,7 @@
         .var screen_control = $d011
         .var raster_line = $d012
         .var interrupt_status = $d019
+        .var vic_memory_setup = $d018
 
         // kernel
         .var normal_interrupt = $ea31
@@ -33,6 +34,11 @@ start:
         lda #%00011011
         sta screen_control
 
+        lda #%00011110
+        sta vic_memory_setup
+
+        jsr clear_screen
+
         lda #$00
         sta raster_line
 
@@ -47,6 +53,21 @@ irq1:   asl interrupt_status
         jsr music+3
         SetBorderColor(0)
         jmp normal_interrupt_no_keyboard_scan
+
+clear_screen:
+        lda #$00
+        ldx #$00
+
+clr_loop:
+        sta $0400, x
+        sta $04fa, x
+        sta $05f4, x
+        sta $06ee, x
+        inx
+        cpx #$fa
+        bne clr_loop
+
+        rts
 
         *=$1000 "Music"
 music:
