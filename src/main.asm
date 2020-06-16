@@ -1,35 +1,52 @@
+        .var irq_low = $0314
+        .var irq_high = $0315
+        .var irq_control = $dc0d
+        .var nmi_control = $dd0d
+        .var interrupt_control = $d01a
+        .var screen_control = $d011
+        .var raster_line = $d012
+        .var interrupt_status = $d019
+
+        // kernel
+        .var normal_interrupt = $ea31
+        .var normal_interrupt_no_keyboard_scan = $ea81
+
         * = $0801 "Main Program"
 start:
-        lda #$00
-        sta $d020
-        sta $d021
+        SetScreenAndBorderColor($00)
         lda #$00
         jsr music
         sei
+
         lda #<irq1
-        sta $0314
+        sta irq_low
         lda #>irq1
-        sta $0315
-        lda #$7f
-        sta $dc0d
-        sta $dd0d
-        lda #$81
-        sta $d01a
-        lda #$1b
-        sta $d011
-        lda #$80
-        sta $d012
-        lda $dc0d
-        lda $dd0d
-        asl $d019
+        sta irq_high
+
+        lda #%00000001
+        sta irq_control
+        sta nmi_control
+
+        lda #%00000001
+        sta interrupt_control
+
+        lda #%00011011
+        sta screen_control
+
+        lda #$00
+        sta raster_line
+
+        lda irq_control
+        lda nmi_control
+        asl interrupt_status
         cli
         jmp *
 
-irq1:   asl $d019
+irq1:   asl interrupt_status
         SetBorderColor(2)
         jsr music+3
         SetBorderColor(0)
-        jmp $ea81
+        jmp normal_interrupt_no_keyboard_scan
 
         *=$1000 "Music"
 music:
@@ -38,4 +55,10 @@ music:
 .macro SetBorderColor(color) {
         lda #color
         sta $d020
-}
+        }
+
+.macro SetScreenAndBorderColor(color) {
+        lda #color
+        sta $d020
+        sta $d021
+        }
