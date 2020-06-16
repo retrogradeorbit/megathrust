@@ -21,10 +21,10 @@ build/megathrust.prg: build/megathrust-full.prg
 	cruncher/pucrunch $(CRUNCHERARGS) build/megathrust-full.prg build/megathrust.prg
 
 run: build/megathrust.prg
-	emulator/x64 $(EMULATORARGS) build/megathrust.prg
+	x64 $(EMULATORARGS) build/megathrust.prg
 
 run-full: build/megathrust-full.prg
-	emulator/x64 $(EMULATORARGS) build/megathrust-full.prg
+	x64 $(EMULATORARGS) build/megathrust-full.prg
 
 # debugger
 # ll "build/main.vs"
