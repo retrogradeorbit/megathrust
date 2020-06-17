@@ -51,10 +51,14 @@
   "process charmap"
   [& args]
   (let [charmap (mikera/load-image "../gfx/charmap-01.png")
-        order (into []
+        order (concat
                     (for [y (range 5)
                           x (range 18)]
-                      [x y]))
+                      [x y])
+                    (for [y (range 5)
+                          x (range 18 40)]
+                      [x y])
+                    )
         chars (->> (for [[x y] order]
                      [[x y] (for [yp (range 8)]
                               (make-byte charmap [(* 8 x) (+ (* 8 y) yp)]))])
@@ -89,7 +93,14 @@
                         x (range 18)]
                     (locations [x y])))]
       (println "writing gfx/mega-chars.bin ...")
-      (io/copy (byte-array mega-charmap) (io/file "../gfx/mega-chars.bin"))
+      (io/copy (byte-array mega-charmap) (io/file "../gfx/mega-chars.bin")))
 
+    (let [thrust-charmap
+          (concat [(- 40 18) 5]
+                  (for [y (range 5)
+                        x (range 18 40)]
+                    (locations [x y])))]
+      (println "writing gfx/thrust-chars.bin ...")
+      (io/copy (byte-array thrust-charmap) (io/file "../gfx/thrust-chars.bin"))
       )
     ))
