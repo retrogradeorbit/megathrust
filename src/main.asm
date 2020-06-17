@@ -170,9 +170,99 @@ next_instr:
         nop
         nop
         nop
+        //nop
+        //nop
+        //nop
+        jsr colour_bar_loop
+
+        jsr colour_bar
+        jsr colour_bar
+
+        // thrust bar
+        lda #$00
+        ldx #$00
+        ldy #$00
         nop
         nop
         nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        bit $00
+        //nop
+        //nop
+        //nop
+
+
+
+        jsr colour_bar_loop
+
+        lda #$00
+        sta screen_colour
+
+        //cli
+
+        inc interrupt_status
+
+        lda #<irq1
+        sta irq_low
+        lda #>irq1
+        sta irq_high
+
+        lda #$00
+        sta raster_line
+
+
+
+        pla
+        tay
+        pla
+        tax
+        pla
+
+        rti
+
+colour_bar:
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+
+        inx
+        lda colourbar_lut,x
+        sta screen_colour
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        lda #$00
+        sta screen_colour
+
+        nop
+        nop
+        nop
+        bit $00
+        rts
 
 colour_bar_loop:
         jsr colour_bar
@@ -280,57 +370,6 @@ colour_bar_loop:
         nop
         nop
 
-
-        lda #$00
-        sta screen_colour
-
-        //cli
-
-        inc interrupt_status
-
-        lda #<irq1
-        sta irq_low
-        lda #>irq1
-        sta irq_high
-
-        lda #$00
-        sta raster_line
-
-
-
-        pla
-        tay
-        pla
-        tax
-        pla
-
-        rti
-
-colour_bar:
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-
-        inx
-        lda colourbar_lut,x
-        sta screen_colour
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        lda #$00
-        sta screen_colour
-
-        nop
-        nop
-        nop
-        bit $00
         rts
 
 badline_bar:
@@ -525,6 +564,8 @@ old_colour_lut:
 mega_charmap:
         .import binary "gfx/mega-chars.bin"
 
+thrust_charmap:
+        .import binary "gfx/thrust-chars.bin"
 
 
         *=$1000 "Music"
