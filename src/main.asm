@@ -243,7 +243,6 @@ colour_bar:
         nop
         nop
         nop
-        nop
 
         inx
         lda colourbar_lut,x
@@ -255,10 +254,11 @@ colour_bar:
         nop
         nop
         nop
+        nop
+        nop
         lda #$00
         sta screen_colour
 
-        nop
         nop
         nop
         bit $00
@@ -450,7 +450,60 @@ title:
 //        sta printer+4
 //        jsr printer
 
+        // width
+        lda mega_charmap
+        sta $10
+
+        // height
+        lda mega_charmap+1
+        sta $11
+
+        // source block location
+        lda #<mega_charmap
+        clc
+        adc #$02 // first 2 bytes are width and height
+        sta $12
+
+        lda #>mega_charmap
+        adc #$00 // add carry in case 256 byte boundary crossing
+        sta $13
+
+        // screen destination location
+        lda #$04
+        sta $15
+        lda #$fc
+        sta $14
+
         jsr draw_char_block
+
+
+        // width
+        lda thrust_charmap
+        sta $10
+
+        // height
+        lda thrust_charmap+1
+        sta $11
+
+        // source block location
+        lda #<thrust_charmap
+        clc
+        adc #$02 // first 2 bytes are width and height
+        sta $12
+
+        lda #>thrust_charmap
+        adc #$00 // add carry in case 256 byte boundary crossing
+        sta $13
+
+        // screen destination location
+        lda #$05
+        sta $15
+        lda #$ea
+        sta $14
+
+        jsr draw_char_block
+
+
 
         rts
 
@@ -490,46 +543,6 @@ cfl_jmp:
         rts
 
 draw_char_block:
-        // width
-        lda mega_charmap
-        sta $10
-
-        // height
-        lda mega_charmap+1
-        sta $11
-
-        // source block location
-        lda #<mega_charmap
-        clc
-        adc #$02
-        sta $12
-        //clc
-        //adc #$02     // first 2 bytes are width and height
-        //sta dcb_read+1
-        lda #>mega_charmap
-        adc #$00
-        sta $13
-        //adc #$00     // add carry in case 256 byte boundary crossing
-        //sta dcb_read+2
-        //clc
-
-        // screen destination location
-        lda #$04
-        //sta dcb_screen_dest+2
-        sta $15
-        lda #$fc
-        sta $14
-        //sta dcb_screen_dest+1
-
-        // setup width and height counters
-        //ldy #$00
-        //lda ($12),Y
-        //adc #$01
-        //sta dcb_width+1
-        //ldy #1
-        //lda ($12),Y
-        //sbc #$01
-        //sta dcb_height+1
 
 dcb_height:
         ldx #$0
