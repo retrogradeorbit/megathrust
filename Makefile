@@ -28,6 +28,7 @@ run-full: build/megathrust-full.prg
 	x64 $(EMULATORARGS) build/megathrust-full.prg
 
 process-images:
+	-mkdir data
 	cd process && lein run
 
 # debugger
