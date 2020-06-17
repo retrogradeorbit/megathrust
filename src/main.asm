@@ -445,36 +445,6 @@ print_loop:
         .var title_ypos = 6
 
 title:
-        // MEGA
-//        ldx #$01
-//        lda #40*title_ypos+title_xpos+1
-//        sta printer+4
-//        jsr printer
-//
-//        lda #40*(1+title_ypos)+title_xpos+1
-//        sta printer+4
-//        jsr printer
-//
-//        lda #40*(2+title_ypos)+title_xpos+1
-//        sta printer+4
-//        jsr printer
-//
-//        // THRUST
-//        lda #$b
-//        sta printer+9      // line is two longer
-//
-//        lda #40*(3+title_ypos)+title_xpos
-//        sta printer+4
-//        jsr printer
-//
-//        lda #40*(4+title_ypos)+title_xpos
-//        sta printer+4
-//        jsr printer
-//
-//        lda #40*(5+title_ypos)+title_xpos
-//        sta printer+4
-//        jsr printer
-
         // width
         lda mega_charmap
         sta $10
