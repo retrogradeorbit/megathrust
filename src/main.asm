@@ -177,7 +177,17 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
         jsr colour_bar
-        jsr badline_bar
+
+        //jsr badline_bar
+        inx
+        lda colourbar_lut,x
+        sta screen_colour
+        nop
+        nop
+        nop
+        nop
+        nop
+
         jsr colour_bar
         jsr colour_bar
         jsr colour_bar
@@ -185,7 +195,17 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
         jsr colour_bar
-        jsr badline_bar
+
+        //jsr badline_bar
+        inx
+        lda colourbar_lut,x
+        sta screen_colour
+        nop
+        nop
+        nop
+        nop
+        nop
+
         jsr colour_bar
         jsr colour_bar
         jsr colour_bar
@@ -193,7 +213,17 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
         jsr colour_bar
-        jsr badline_bar
+
+        //jsr badline_bar
+        inx
+        lda colourbar_lut,x
+        sta screen_colour
+        nop
+        nop
+        nop
+        nop
+        nop
+
         jsr colour_bar
         jsr colour_bar
         jsr colour_bar
@@ -201,7 +231,17 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
         jsr colour_bar
-        jsr badline_bar
+
+        //jsr badline_bar
+        inx
+        lda colourbar_lut,x
+        sta screen_colour
+        nop
+        nop
+        nop
+        nop
+        nop
+
         jsr colour_bar
         jsr colour_bar
         jsr colour_bar
@@ -209,7 +249,17 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
         jsr colour_bar
-        jsr badline_bar
+
+        //jsr badline_bar
+        inx
+        lda colourbar_lut,x
+        sta screen_colour
+        nop
+        nop
+        nop
+        nop
+        nop
+
         jsr colour_bar
         jsr colour_bar
         jsr colour_bar
@@ -248,11 +298,10 @@ colour_bar:
         nop
         nop
         nop
-        nop
-        nop
 
         inx
-        stx screen_colour
+        lda colourbar_lut,x
+        sta screen_colour
         nop
         nop
         nop
@@ -340,6 +389,45 @@ title:
         jsr printer
 
         rts
+
+        * = $2000 "colour LUT"
+colourbar_lut:
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
+        .byte 11, 12, 15, 1, 15, 12, 11, 0
 
         *=$1000 "Music"
 music:
