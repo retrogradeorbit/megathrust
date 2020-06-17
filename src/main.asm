@@ -466,7 +466,7 @@ title:
         // screen destination location
         lda #$04
         sta $15
-        lda #$fc
+        lda #$84
         sta $14
 
         jsr draw_char_block
@@ -493,12 +493,30 @@ title:
         // screen destination location
         lda #$05
         sta $15
-        lda #$ea
+        lda #$4a
         sta $14
 
         jsr draw_char_block
 
 
+        // PRESS FIRE
+        lda #<text_press_fire
+        sta $16
+        lda #>text_press_fire
+        sta $17
+
+        // x
+        lda #$09
+        sta $18
+
+        // y
+        lda #18
+        sta $19
+
+        // colour
+        lda #$01
+        sta $20
+        jsr write_text
 
         rts
 
@@ -577,6 +595,77 @@ dcb_rowsize:
 
         rts
 
+write_text:
+        // src $16/$17. x: $18. y $19. colour $20
+        // calc destinations $21-$24
+
+        lda #<$0400
+        sta $21
+        lda #>$0400
+        sta $22
+
+        lda #<$d800
+        sta $23
+        lda #>$d800
+        sta $24
+
+        ldx #$00
+wtl1:
+        // ypos
+        lda $21
+        clc
+        adc #40
+        sta $21
+        lda $22
+        adc #0
+        sta $22
+
+        lda $23
+        clc
+        adc #40
+        sta $23
+        lda $24
+        adc #0
+        sta $24
+
+        inx
+        cpx $19
+        bmi wtl1
+
+        // xpos
+        lda $21
+        clc
+        adc $18
+        sta $21
+        lda $22
+        adc #0
+        sta $22
+
+        lda $23
+        clc
+        adc $18
+        sta $23
+        lda $24
+        adc #0
+        sta $24
+
+        ldy #$00
+
+write_write:
+        lda ($16),y
+        cmp #$ff
+        bne write_char
+        rts
+
+write_char:
+        sta ($21),y
+
+        // colour
+        lda $20
+        sta ($23),y
+
+        iny
+        jmp write_write
 
         * = $2000 "colour LUT"
 colourbar_lut:
@@ -603,6 +692,9 @@ colourbar_lut_2:
 old_colour_lut:
         .byte 6, 9, 11, 2, 4, 8, 12, 14, 10, 5, 15, 3, 7, 13, 1
         .byte 1, 13, 7, 3, 15, 5, 10, 14, 12, 8, 4, 2, 11, 9, 6
+
+text_press_fire:
+        .import binary "data/press-fire-text.bin"
 
 mega_charmap:
         .import binary "gfx/mega-chars.bin"
