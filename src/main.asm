@@ -138,45 +138,83 @@ irq3:
         cmp #101
         beq next_instr
 
+        // now three cycles after the start of rasterline
+
 next_instr:
         // now we are cycle exact
-        //sei
+        lda #$00
         ldx #$00
         ldy #$00
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+
 colour_bar_loop:
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr badline_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr badline_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr badline_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr badline_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr badline_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
+        jsr colour_bar
 
-        inx
-        stx screen_colour
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        lda #$00
-        sta screen_colour
-
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        // raster change here
-        nop
-        nop
-
-        iny
-        cpy #$30
-        bmi colour_bar_loop
 
         lda #$00
         sta screen_colour
@@ -202,6 +240,40 @@ colour_bar_loop:
         pla
 
         rti
+
+colour_bar:
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+
+        inx
+        stx screen_colour
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        lda #$00
+        sta screen_colour
+
+        nop
+        nop
+        nop
+        bit $00
+        rts
+
+badline_bar:
+        inx
+        stx screen_colour
+        bit $00
+        rts
 
 clear_screen:
         lda #$00
