@@ -7,6 +7,7 @@
         .var raster_line = $d012
         .var interrupt_status = $d019
         .var vic_memory_setup = $d018
+        .var vic_bank_select = $dd00
 
         .var border_colour = $d020
         .var screen_colour = $d021
@@ -48,8 +49,12 @@ start:
         lda #%00011110
         sta vic_memory_setup
 
+        lda #%00000011
+        sta vic_bank_select
+
         jsr clear_screen
         jsr title
+        jsr init_sprites
 
         lda #$00
         sta raster_line
@@ -69,7 +74,7 @@ irq1:
         SetBorderColor(2)
         jsr music+3
         SetBorderColor(5)
-        jsr copy_frame_lut
+        //jsr copy_frame_lut
         SetBorderColor(0)
 
         // next interrupt
@@ -78,7 +83,7 @@ irq1:
         lda #>irq2
         sta irq_high
 
-        lda #91
+        lda #79
         sta raster_line
 
         // ack interrupt
@@ -93,28 +98,38 @@ irq1:
         rti
 
 irq2:
-        lda #93
-        sta raster_line
-        lda #<irq3
-        sta irq_low
-        lda #>irq3
-        sta irq_high
+        //lda #93
+        //sta raster_line
+        //lda #<irq3
+        //sta irq_low
+        //lda #>irq3
+        //sta irq_high
+
+        //inc $d021
+
         // ack interrupt
         inc interrupt_status
-        cli
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
-        nop
+
+        ldx raster_line
+
+        // sprites
+        cpx #85
+        bmi skip
+        jmp sprites_1
+
+        cpx #115
+        bmi skip
+        jmp sprites_2
+
+skip:
+        // end
+        cpx #200
+        bpl reset_irq1
+
+end:
+        ldx raster_line
+        inx
+        stx raster_line
 
         pla
         tay
@@ -123,6 +138,97 @@ irq2:
         pla
 
         rti
+
+sprites_1:
+        inc $d021
+
+        // sprite pointers
+        lda #$f8
+        sta $07f8
+        lda #$f9
+        sta $07f9
+        lda #$fa
+        sta $07fa
+        lda #$fb
+        sta $07fb
+        lda #$fc
+        sta $07fc
+        lda #$fd
+        sta $07fd
+
+        // sprite positions
+        ldx #94
+        stx $d001
+        stx $d003
+        stx $d005
+        stx $d007
+        stx $d009
+        stx $d00b
+
+        jmp end
+
+sprites_2:
+        inc $d021
+
+        // sprite pointers
+        lda #$fe
+        sta $07f8
+        lda #$ff
+        sta $07f9
+        lda #$fe
+        sta $07fa
+        lda #$ff
+        sta $07fb
+        lda #$fe
+        sta $07fc
+        lda #$ff
+        sta $07fd
+
+        // sprite positions
+        ldx #94+21
+        stx $d001
+        stx $d003
+        stx $d005
+        stx $d007
+        stx $d009
+        stx $d00b
+
+        jmp end
+
+reset_irq1:
+        lda #$00
+        sta $d021
+
+        lda #<irq1
+        sta irq_low
+        lda #>irq1
+        sta irq_high
+
+        lda #$00
+        sta raster_line
+
+        pla
+        tay
+        pla
+        tax
+        pla
+
+        rti
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 irq3:
         nop            // 2 cycles each
@@ -170,11 +276,24 @@ next_instr:
         nop
         nop
         nop
-        //nop
-        //nop
-        //nop
-        jsr colour_bar_loop
 
+
+        // temp
+        //nop
+        //nop
+        //nop
+
+        //jsr colour_bar
+        //jsr sprite_line
+        //jsr colour_bar
+        //jsr colour_bar
+        //jsr colour_bar
+
+        //lda #$08
+        //sta $d021
+
+//      TEMP
+        jsr colour_bar_loop
         jsr colour_bar
         jsr colour_bar
 
@@ -209,7 +328,7 @@ next_instr:
         //nop
 
 
-
+        //TEMP
         jsr colour_bar_loop
 
         lda #$00
@@ -264,47 +383,83 @@ colour_bar:
         bit $00
         rts
 
+short_colour_bar:
+        //nop
+        //nop
+        //nop
+        bit $00   // instead of nop
+        nop
+
+        inx
+        lda colourbar_lut,x
+        sta screen_colour
+        nop
+        nop
+        nop
+        //nop
+        //nop
+        bit $00//nop
+        nop
+        nop
+        nop
+        lda #$00
+        sta screen_colour
+
+        nop
+        nop
+        bit $00
+        rts
+
+sprite_line:
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        rts
+
 colour_bar_loop:
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
 
         //jsr badline_bar
         inx
         lda colourbar_lut,x
         sta screen_colour
-        nop
-        nop
-        nop
-        nop
+        //nop
+        //nop
+        //nop
+        bit $00//nop
         nop
 
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
 
         //jsr badline_bar
         inx
         lda colourbar_lut,x
         sta screen_colour
-        nop
-        nop
-        nop
-        nop
+        //nop
+        //nop
+        //nop
+        bit $00//nop
         nop
 
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
+        jsr short_colour_bar
 
         //jsr badline_bar
         inx
@@ -398,6 +553,109 @@ clr_loop:
         inx
         cpx #$fa
         bne clr_loop
+
+        rts
+
+init_sprites:
+        // sprite pointers
+        lda #$f8
+        sta $07f8
+        lda #$f9
+        sta $07f9
+        lda #$fa
+        sta $07fa
+        lda #$fb
+        sta $07fb
+        lda #$fc
+        sta $07fc
+        lda #$fd
+        sta $07fd
+        lda #$fe
+        sta $07fe
+        lda #$ff
+        sta $07ff
+
+        // sprite extra colors
+        //lda #$01
+        //sta $d025
+        //lda #$06
+        //sta $d026
+
+        // sprite colours
+        lda #$01
+        sta $d027
+        sta $d028
+        sta $d029
+        sta $d02a
+        sta $d02b
+        sta $d02c
+        sta $d02d
+        sta $d02e
+
+        // sprite enable
+        lda #%00111111
+        sta $d015
+
+        // sprite priority. in front of screen
+        lda #%00000000
+        sta $d01b
+
+        // sprite multicolor off
+        lda #%00000000
+        sta $d01c
+
+        // double width + double height
+        lda #%00000000
+        sta $d01d
+        sta $d017
+
+        // x-coord bit 8
+        lda #%00000000
+        sta $d010
+
+        // sprite 0
+        lda #120
+        sta $d000
+        ldx #94
+        stx $d001
+
+        adc #23
+        sta $d002
+        ldx #94
+        stx $d003
+
+        adc #24
+        sta $d004
+        ldx #94
+        stx $d005
+
+        adc #24
+        sta $d006
+        ldx #94
+        stx $d007
+
+        adc #24
+        sta $d008
+        ldx #94
+        stx $d009
+
+        adc #24
+        sta $d00a
+        ldx #94
+        stx $d00b
+
+
+        //lda #150
+        //sta $d002
+        //sta $d003
+
+        //lda #200
+        //sta $d002
+        //sta $d003
+
+
+        lda #%00011110
+        sta $d018
 
         rts
 
@@ -498,7 +756,7 @@ title:
         // screen destination location
         lda #$05
         sta $15
-        lda #$ea
+        lda #$c2
         sta $14
 
         jsr draw_char_block
@@ -593,14 +851,14 @@ colourbar_lut:
         .byte 1, 13, 7, 3, 15, 5, 10, 14, 12, 8, 4, 2, 11, 9, 6
 
 colourbar_lut_1:
-        .byte 0, 0, 0, 0
+        .byte 1, 0, 1, 0
         .byte 6, 6, 9, 11, 11, 2, 4, 4, 8, 12, 12, 14, 10, 10, 5, 15, 15, 3, 13, 7, 7, 1
         .byte 1, 7, 7, 13, 3, 15, 15, 5, 10, 10, 14, 12, 12, 8, 4, 4, 2, 11, 11, 9, 6, 6
 
 
 
 colourbar_lut_2:
-        .byte 0, 0, 0, 0
+        .byte 0, 1, 0, 1
         .byte 6, 9, 9, 11, 2, 2, 4, 8, 8, 12, 14, 14, 10, 5, 5, 15, 3, 3, 13, 13, 7, 1
         .byte 1, 7, 13, 13, 3, 3, 15, 5, 5, 10, 14, 14, 12, 8, 8, 4, 2, 2, 11, 9, 9, 6
 
@@ -624,9 +882,18 @@ music:
 charmap_01:
         .import binary "gfx/charmap-01.bin"
 
+        *=$3e00 "spritemap 01"
+spritemap_01:
+        .import binary "gfx/spritemap-01.bin"
+
 .macro SetBorderColor(color) {
         lda #color
         sta $d020
+        }
+
+.macro SetScreenColor(color) {
+        lda #color
+        sta $d021
         }
 
 .macro SetScreenAndBorderColor(color) {

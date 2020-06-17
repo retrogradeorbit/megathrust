@@ -40,16 +40,7 @@
                     [l (.indexOf charset ch)])
                   locs)))))
 
-#_
-(char-locations
- [(list 0 1 2) (list 2 3 4) (list 9 10 11)]
- {(list 2 3 4) [[1 1] [2 2]]
-   (list 9 10 11) [[0 10]]}
- )
-
-(defn -main
-  "process charmap"
-  [& args]
+(defn process-chars []
   (let [charmap (mikera/load-image "../gfx/charmap-01.png")
         order (concat
                     (for [y (range 5)
@@ -101,6 +92,30 @@
                         x (range 18 40)]
                     (locations [x y])))]
       (println "writing gfx/thrust-chars.bin ...")
-      (io/copy (byte-array thrust-charmap) (io/file "../gfx/thrust-chars.bin"))
-      )
+      (io/copy (byte-array thrust-charmap) (io/file "../gfx/thrust-chars.bin")))))
+
+(defn process-sprites []
+  (let [spritemap (mikera/load-image "../gfx/spritemap-01.png")
+        order [[0 0] [1 0] [2 0] [3 0] [4 0] [5 0]
+               [0 1] [1 1] [2 1] [3 1] [4 1] [5 1]
+               ]
+        sprites (->> (for [[x y] order]
+                       (let [xx (* 24 x)
+                             yy (* 21 y)]
+                         (concat
+                          (for [yoff (range 21)
+                                xoff [0 1 2]]
+                            (make-byte spritemap [(+ xx (* 8 xoff)) (+ yoff yy)]))
+                          [0] ;; 63 bytes + 1 byte padding
+                          )
+                         )))]
+    (println "writing gfx/spritemap-01.bin ...")
+    (io/copy (byte-array (flatten sprites)) (io/file "../gfx/spritemap-01.bin"))
     ))
+
+(defn -main
+  "process charmap"
+  [& args]
+  (process-chars)
+  (process-sprites)
+  )
