@@ -47,28 +47,45 @@
    (list 9 10 11) [[0 10]]}
  )
 
+(defn make-text-chars [line]
+  (concat
+   (for [c line]
+     (cond
+       (= c \space)
+       0
+
+       (<= (int \a) (int c) (int \z))
+       (+ 2 (- (int c) (int \a)))))
+   [255]))
+
 (defn -main
   "process charmap"
   [& args]
   (let [charmap (mikera/load-image "../gfx/charmap-01.png")
         order (concat
-                    (for [y (range 5)
-                          x (range 18)]
-                      [x y])
-                    (for [y (range 5)
-                          x (range 18 40)]
-                      [x y])
-                    )
+               (for [y (range 5)
+                     x (range 18)]
+                 [x y])
+               (for [y (range 5)
+                     x (range 18 40)]
+                 [x y])
+               )
         chars (->> (for [[x y] order]
                      [[x y] (for [yp (range 8)]
                               (make-byte charmap [(* 8 x) (+ (* 8 y) yp)]))])
                    (into {}))
         ;;data (byte-array bytes)
 
+        text-chars (->> (for [x (range 13 39)]
+                          (for [yp (range 8)]
+                            (make-byte charmap [(* 8 x) (+ (* 8 8) yp)]))
+                          ))
+
         deduped (dedup chars)
         charset (concat [(list 0 0 0 0 0 0 0 0)
                          (list 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff)
                          ]
+                        text-chars
                         (make-char-set deduped))
         locations (char-locations charset deduped)
         ]
@@ -103,4 +120,9 @@
       (println "writing gfx/thrust-chars.bin ...")
       (io/copy (byte-array thrust-charmap) (io/file "../gfx/thrust-chars.bin"))
       )
+
+    (println "writing data/press-fire-text.bin ...")
+    (io/copy (byte-array (make-text-chars
+                          "press fire button to play"
+                          )) (io/file "../data/press-fire-text.bin"))
     ))
