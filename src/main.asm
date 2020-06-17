@@ -490,47 +490,82 @@ cfl_jmp:
         rts
 
 draw_char_block:
-        ldy mega_charmap
-        dey
-        sty dcb_width+1
-        ldx #1
-        ldy mega_charmap,X
-        dey
-        sty dcb_height+1
+        // width
+        lda mega_charmap
+        sta $10
+
+        // height
+        lda mega_charmap+1
+        sta $11
+
+        // source block location
+        lda #<mega_charmap
+        clc
+        adc #$02
+        sta $12
+        //clc
+        //adc #$02     // first 2 bytes are width and height
+        //sta dcb_read+1
+        lda #>mega_charmap
+        adc #$00
+        sta $13
+        //adc #$00     // add carry in case 256 byte boundary crossing
+        //sta dcb_read+2
+        //clc
+
+        // screen destination location
+        lda #$04
+        //sta dcb_screen_dest+2
+        sta $15
+        lda #$fc
+        sta $14
+        //sta dcb_screen_dest+1
+
+        // setup width and height counters
+        //ldy #$00
+        //lda ($12),Y
+        //adc #$01
+        //sta dcb_width+1
+        //ldy #1
+        //lda ($12),Y
+        //sbc #$01
+        //sta dcb_height+1
 
 dcb_height:
-        ldy #1
-
+        ldx #$0
 dcb_width:
-        ldx #1
-        lda mega_charmap+2,X
-        sta $04fc,X
-        dex
-        cpx #$00
-        bpl dcb_width+2
+        ldy #$0
+dcb_read:
+        lda ($12),y
+dcb_screen_dest:
+        sta ($14),y
+        iny
+        cpy $10
+        bmi dcb_read
 
         // add one row to all the locs
         // add width to lda
-        lda dcb_width+3
+        lda $12
         clc
-        adc #$12
-        sta dcb_width+3
-        lda dcb_width+4
+dcb_rowsize:
+        adc $10
+        sta $12
+        lda $13
         adc #$00
-        sta dcb_width+4
+        sta $13
 
         // add 40 to sta
-        lda dcb_width+6
+        lda $14
         clc
         adc #40
-        sta dcb_width+6
-        lda dcb_width+7
+        sta $14
+        lda $15
         adc #$00
-        sta dcb_width+7
+        sta $15
 
-        dey
-        cpy #$00
-        bpl dcb_width
+        inx
+        cpx $11
+        bmi dcb_width
 
         rts
 
