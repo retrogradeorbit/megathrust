@@ -67,9 +67,9 @@ irq1:
         // tya
         // pha
 
-        SetBorderColor(2)
+        SetBorderColor(0)
         jsr music+3
-        SetBorderColor(5)
+        SetBorderColor(0)
         jsr copy_frame_lut
         SetBorderColor(0)
 
