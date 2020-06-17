@@ -48,7 +48,8 @@ start:
         lda #%00011110
         sta vic_memory_setup
 
-        jsr clear_screen
+        // jsr clear_screen
+        jsr fill_screen
         jsr title
 
         lda #$00
@@ -78,7 +79,7 @@ irq1:
         lda #>irq2
         sta irq_high
 
-        lda #91
+        lda #91-24
         sta raster_line
 
         // ack interrupt
@@ -93,7 +94,7 @@ irq1:
         rti
 
 irq2:
-        lda #93
+        lda #93-24
         sta raster_line
         lda #<irq3
         sta irq_low
@@ -137,7 +138,7 @@ irq3:
 
         bit $00        // 3 cycles
         lda raster_line
-        cmp #93
+        cmp #93-24
         beq next_instr
 
         // now three cycles after the start of rasterline
@@ -398,6 +399,30 @@ clr_loop:
         inx
         cpx #$fa
         bne clr_loop
+
+        rts
+
+fill_screen:
+        ldx #$00
+
+fill_loop:
+        // chars
+        lda #$01
+        sta $0400, x
+        sta $04fa, x
+        sta $05f4, x
+        sta $06ee, x
+
+        // colour ram
+        lda #$00
+        sta $d800, x
+        sta $d8fa, x
+        sta $d9f4, x
+        sta $daee, x
+
+        inx
+        cpx #$fa
+        bne fill_loop
 
         rts
 
