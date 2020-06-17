@@ -78,58 +78,16 @@ irq1:
         SetBorderColor(0)
 
         // next interrupt
-        lda #<irq2
+        lda #<sprites_1
         sta irq_low
-        lda #>irq2
+        lda #>sprites_1
         sta irq_high
 
-        lda #79
+        lda #90
         sta raster_line
 
         // ack interrupt
         inc interrupt_status
-
-        pla
-        tay
-        pla
-        tax
-        pla
-
-        rti
-
-irq2:
-        //lda #93
-        //sta raster_line
-        //lda #<irq3
-        //sta irq_low
-        //lda #>irq3
-        //sta irq_high
-
-        //inc $d021
-
-        // ack interrupt
-        inc interrupt_status
-
-        ldx raster_line
-
-        // sprites
-        cpx #85
-        bmi skip
-        jmp sprites_1
-
-        cpx #115
-        bmi skip
-        jmp sprites_2
-
-skip:
-        // end
-        cpx #200
-        bpl reset_irq1
-
-end:
-        ldx raster_line
-        inx
-        stx raster_line
 
         pla
         tay
@@ -165,7 +123,21 @@ sprites_1:
         stx $d009
         stx $d00b
 
-        jmp end
+        inc interrupt_status
+        lda #113
+        sta raster_line
+        lda #<sprites_2
+        sta irq_low
+        lda #>sprites_2
+        sta irq_high
+
+        pla
+        tay
+        pla
+        tax
+        pla
+
+        rti
 
 sprites_2:
         inc $d021
@@ -175,13 +147,13 @@ sprites_2:
         sta $07f8
         lda #$ff
         sta $07f9
-        lda #$fe
+        lda #$fa
         sta $07fa
-        lda #$ff
+        lda #$fb
         sta $07fb
-        lda #$fe
+        lda #$fc
         sta $07fc
-        lda #$ff
+        lda #$fd
         sta $07fd
 
         // sprite positions
@@ -193,7 +165,71 @@ sprites_2:
         stx $d009
         stx $d00b
 
-        jmp end
+        inc interrupt_status
+        lda #0
+        sta raster_line
+        lda #<irq1
+        sta irq_low
+        lda #>irq1
+        sta irq_high
+
+        pla
+        tay
+        pla
+        tax
+        pla
+
+        rti
+
+
+
+
+irq2:
+        //lda #93
+        //sta raster_line
+        //lda #<irq3
+        //sta irq_low
+        //lda #>irq3
+        //sta irq_high
+
+        //inc $d021
+
+        // ack interrupt
+        inc interrupt_status
+
+        ldx raster_line
+
+        // sprites
+        cpx #80  // $50
+        bmi skip
+        jsr sprites_1
+
+        ldx raster_line
+        cpx #100
+        bmi skip
+        jsr sprites_2
+
+skip:
+        // end
+        ldx raster_line
+        cpx #200
+        bpl reset_irq1
+
+end:
+        ldx raster_line
+        inx
+        stx raster_line
+
+        pla
+        tay
+        pla
+        tax
+        pla
+
+        rti
+
+
+
 
 reset_irq1:
         lda #$00
