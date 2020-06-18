@@ -171,9 +171,6 @@ next_instr:
         nop
         nop
         nop
-        //nop
-        //nop
-        //nop
         jsr colour_bar_loop
 
         jsr colour_bar
@@ -205,18 +202,11 @@ next_instr:
         nop
         nop
         bit $00
-        //nop
-        //nop
-        //nop
-
-
 
         jsr colour_bar_loop
 
         lda #$00
         sta screen_colour
-
-        //cli
 
         inc interrupt_status
 
@@ -227,8 +217,6 @@ next_instr:
 
         lda #$00
         sta raster_line
-
-
 
         pla
         tay
@@ -271,7 +259,7 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
 
-        //jsr badline_bar
+        // badline
         inx
         lda colourbar_lut,x
         sta screen_colour
@@ -289,7 +277,7 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
 
-        //jsr badline_bar
+        //badline
         inx
         lda colourbar_lut,x
         sta screen_colour
@@ -307,7 +295,7 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
 
-        //jsr badline_bar
+        // badline
         inx
         lda colourbar_lut,x
         sta screen_colour
@@ -325,7 +313,7 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
 
-        //jsr badline_bar
+        // badline
         inx
         lda colourbar_lut,x
         sta screen_colour
@@ -343,7 +331,7 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
 
-        //jsr badline_bar
+        // badline
         inx
         lda colourbar_lut,x
         sta screen_colour
@@ -361,7 +349,7 @@ colour_bar_loop:
         jsr colour_bar
         jsr colour_bar
 
-        //jsr badline_bar
+        // badline
         inx
         lda colourbar_lut,x
         sta screen_colour
@@ -371,12 +359,6 @@ colour_bar_loop:
         nop
         nop
 
-        rts
-
-badline_bar:
-        inx
-        stx screen_colour
-        bit $00
         rts
 
 clear_screen:
