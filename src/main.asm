@@ -61,12 +61,6 @@ start:
         jmp *
 
 irq1:
-        // pha
-        // txa
-        // pha
-        // tya
-        // pha
-
         SetBorderColor(0)
         jsr music+3
         SetBorderColor(0)
