@@ -359,7 +359,7 @@ clear_screen:
         lda #$00
         ldx #$00
 
-clr_loop:
+!loop:
         // chars
         sta $0400, x
         sta $04fa, x
@@ -374,14 +374,14 @@ clr_loop:
 
         inx
         cpx #$fa
-        bne clr_loop
+        bne !loop-
 
         rts
 
 fill_screen:
         ldx #$00
 
-fill_loop:
+!loop:
         // chars
         lda #$01
         sta $0400, x
@@ -398,7 +398,7 @@ fill_loop:
 
         inx
         cpx #$fa
-        bne fill_loop
+        bne !loop-
 
         rts
 
@@ -406,14 +406,14 @@ fill_loop:
         // ldy start offset
 printer:
         ldy #$00
-print_loop:
+!loop:
         txa
         sta $0500,y
         inx
         iny
 
         cpy #$9
-        bne print_loop
+        bne !loop-
 
         rts
 
@@ -421,6 +421,7 @@ print_loop:
         .var title_ypos = 6
 
 title:
+        // MEGA
         // width
         lda mega_charmap
         sta $10
@@ -447,7 +448,7 @@ title:
 
         jsr draw_char_block
 
-
+        // THRUST
         // width
         lda thrust_charmap
         sta $10
@@ -532,24 +533,20 @@ cfl_jmp:
         rts
 
 draw_char_block:
-
-dcb_height:
         ldx #$0
-dcb_width:
+!loop_line:
         ldy #$0
-dcb_read:
+!read:
         lda ($12),y
-dcb_screen_dest:
         sta ($14),y
         iny
         cpy $10
-        bmi dcb_read
+        bmi !read-
 
         // add one row to all the locs
         // add width to lda
         lda $12
         clc
-dcb_rowsize:
         adc $10
         sta $12
         lda $13
@@ -567,7 +564,7 @@ dcb_rowsize:
 
         inx
         cpx $11
-        bmi dcb_width
+        bmi !loop_line-
 
         rts
 
@@ -586,7 +583,7 @@ write_text:
         sta $24
 
         ldx #$00
-wtl1:
+!loop_y:
         // ypos
         lda $21
         clc
@@ -606,7 +603,7 @@ wtl1:
 
         inx
         cpx $19
-        bmi wtl1
+        bmi !loop_y-
 
         // xpos
         lda $21
@@ -627,13 +624,13 @@ wtl1:
 
         ldy #$00
 
-write_write:
+!write_write:
         lda ($16),y
         cmp #$ff
-        bne write_char
+        bne !write_char+
         rts
 
-write_char:
+!write_char:
         sta ($21),y
 
         // colour
@@ -641,7 +638,7 @@ write_char:
         sta ($23),y
 
         iny
-        jmp write_write
+        jmp !write_write-
 
         * = $2000 "colour LUT"
 colourbar_lut:
