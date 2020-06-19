@@ -70,7 +70,7 @@ irq1:
         jsr music+3
         SetBorderColor(0)
         jsr copy_frame_lut
-        SetBorderColor(1)
+        SetBorderColor(0)
         jsr cycle_colours
         SetBorderColor(0)
 
