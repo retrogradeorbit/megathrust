@@ -627,7 +627,7 @@ draw_char_block:
 /*
 write_text
 ----------
-copy a text string from the wrong onto the screen. Also sets the colour.
+copy a text string from RAM onto the screen. Also sets the colour.
 text is composed of byte values for chars. end of string is marked by 0xff
 
 input:
