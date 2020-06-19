@@ -4,6 +4,7 @@
         .var nmi_control = $dd0d
         .var interrupt_control = $d01a
         .var screen_control = $d011
+        .var screen_control_2 = $d016
         .var raster_line = $d012
         .var interrupt_status = $d019
         .var vic_memory_setup = $d018
