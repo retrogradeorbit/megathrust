@@ -508,15 +508,15 @@ title:
 
         // x
         lda #$09
-        sta $18
+        sta x_pos
 
         // y
         lda #18
-        sta $19
+        sta y_pos
 
         // colour
         lda #$01
-        sta $20
+        sta arg_1
         jsr write_text
 
         rts
@@ -626,7 +626,7 @@ write_text:
         // src $16/$17. x: $18. y $19. colour $20
         // calc destinations $21-$24
 
-        ldx $19
+        ldx y_pos
         lda screen_rows_lo,x
         sta $21
         lda screen_rows_hi,x
@@ -639,7 +639,7 @@ write_text:
         // xpos
         lda $21
         clc
-        adc $18
+        adc x_pos
         sta $21
         lda $22
         adc #0
@@ -647,7 +647,7 @@ write_text:
 
         lda $23
         clc
-        adc $18
+        adc x_pos
         sta $23
         lda $24
         adc #0
@@ -665,7 +665,7 @@ write_text:
         sta ($21),y
 
         // colour
-        lda $20
+        lda arg_1
         sta ($23),y
 
         iny
