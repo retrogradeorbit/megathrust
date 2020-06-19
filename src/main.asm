@@ -673,13 +673,21 @@ write_text:
         iny
         jmp !write_write-
 
-        /*
+/*
+write_text_colours
+------------------
+fill in colour text memory in a row with a specified colour byte value
 
-        */
+input:
+        x_pos   the x position on the screen
+        y_pos   the y position on the screen
+        arg_1   the *length* of the section to write colours for
+        arg_2   the *colour* byte to write
+
+uses:
+        dest_loc_lo, dest_loc_hi        the destination location in colour ram pointer
+*/
 write_text_colours:
-        // x: $18. y $19. length $20. colour $21.
-        // calc destinations $22/$23
-
         ldx y_pos
         lda colour_rows_lo,x
         sta dst_loc_lo
