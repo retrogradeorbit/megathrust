@@ -495,6 +495,23 @@ title:
         sta $20
         jsr write_text
 
+        // x
+        lda #$09
+        sta $18
+
+        // y
+        lda #18
+        sta $19
+
+        // length
+        lda #5
+        sta $20
+
+        // colour
+        lda #$02
+        sta $21
+        jsr write_text_colours
+
         rts
 
 copy_lut_1:
@@ -639,6 +656,58 @@ write_text:
 
         iny
         jmp !write_write-
+
+        /*
+
+        */
+write_text_colours:
+        // x: $18. y $19. length $20. colour $21.
+        // calc destinations $22/$23
+
+        lda #<$d800
+        sta $22
+        lda #>$d800
+        sta $23
+
+        ldx #$00
+!loop_y:
+        // ypos
+        lda $22
+        clc
+        adc #40
+        sta $22
+        lda $23
+        adc #0
+        sta $23
+
+        inx
+        cpx $19
+        bmi !loop_y-
+
+        // xpos
+        lda $22
+        clc
+        adc $18
+        sta $22
+        lda $23
+        adc #0
+        sta $23
+
+        ldy #$00
+
+!write_write:
+        cpy $20
+        bne !write_char+
+        rts
+
+!write_char:
+        // colour
+        lda $21
+        sta ($22),y
+
+        iny
+        jmp !write_write-
+
 
         * = $2000 "colour LUT"
 colourbar_lut:
