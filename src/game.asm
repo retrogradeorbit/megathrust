@@ -274,47 +274,6 @@ star_irq:
 
         jsr plot
 
-
-
-        jmp !done+
-
-
-
-
-
-        // star num
-        ldy #$00
-
-        // erase star
-        lda #$00
-        sta star_first_char_def
-
-        // erase star char
-        sta ($40),y
-
-        // move star
-
-        // plot star
-
-        jmp !done+
-
-
-        clc
-        rol star_first_char_def
-        bcc !done+
-
-        // left one char
-        ldy #$00
-        lda #$00
-        sta ($40),y
-        dec $40
-        lda #star_first_char
-        sta ($40),y
-
-        lda #$01
-        sta star_first_char_def
-
-!done:
         SetBorderColor(11)
 
         inc interrupt_status
