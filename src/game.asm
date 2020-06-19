@@ -5,6 +5,9 @@
         .var star_dy_lo = $42
         .var star_dy_hi = $43
 
+        // bit 0 x dir. bit 1 dir
+        .var star_dir = $44
+
         .var star_count = 4
 
         .var star_first_char = 240
@@ -139,6 +142,16 @@ start_game:
 
         jsr plot
 
+        lda #<10
+        sta star_dx_lo
+        lda #>10
+        sta star_dx_hi
+        lda #<80
+        sta star_dy_lo
+        lda #>80
+        sta star_dy_hi
+
+
 
 
         //jmp *
@@ -260,26 +273,60 @@ star_irq:
 
         jsr clear_byte
 
-        // move
+        lda star_dir
+        and #%01
+        cmp #%01
+        bne !move_x_neg+
+
         clc
         lda star_x_sub
-        adc #10
+        adc star_dx_lo
         sta star_x_sub
         lda star_x_lo
-        adc #0
+        adc star_dx_hi
         sta star_x_lo
         lda star_x_hi
         adc #0
         sta star_x_hi
+        jmp !yspot+
 
+!move_x_neg:
         sec
+        lda star_x_sub
+        sbc star_dx_lo
+        sta star_x_sub
+        lda star_x_lo
+        sbc star_dx_hi
+        sta star_x_lo
+        lda star_x_hi
+        sbc #0
+        sta star_x_hi
+
+!yspot:
+        lda star_dir
+        and #%10
+        cmp #%10
+        bne !move_y_neg+
+
+        clc
         lda star_y_sub
-        sbc #50
+        adc star_dy_lo
         sta star_y_sub
         lda star_y
-        sbc #0
+        adc star_dy_hi
+        sta star_y
+        jmp !after+
+
+!move_y_neg:
+        sec
+        lda star_y_sub
+        sbc star_dy_lo
+        sta star_y_sub
+        lda star_y
+        sbc star_dy_hi
         sta star_y
 
+!after:
         // x
         lda star_x_lo
         sta _X
