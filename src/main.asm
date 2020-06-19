@@ -21,13 +21,15 @@
         .var src_loc_hi = $15
         .var dst_loc_lo = $16
         .var dst_loc_hi = $17
-        .var x_pos = $18
-        .var y_pos = $19
-        .var width = $20
-        .var height = $21
-        .var arg_1 = $22
-        .var arg_2 = $23
-        .var arg_3 = $24
+        .var dst2_loc_lo = $18
+        .var dst2_loc_hi = $19
+        .var x_pos = $20
+        .var y_pos = $21
+        .var width = $22
+        .var height = $23
+        .var arg_1 = $24
+        .var arg_2 = $25
+        .var arg_3 = $26
 
 
 
@@ -628,30 +630,30 @@ write_text:
 
         ldx y_pos
         lda screen_rows_lo,x
-        sta $21
+        sta dst_loc_lo
         lda screen_rows_hi,x
-        sta $22
+        sta dst_loc_hi
         lda colour_rows_lo,x
-        sta $23
+        sta dst2_loc_lo
         lda colour_rows_hi,x
-        sta $24
+        sta dst2_loc_hi
 
         // xpos
-        lda $21
+        lda dst_loc_lo
         clc
         adc x_pos
-        sta $21
-        lda $22
+        sta dst_loc_lo
+        lda dst_loc_hi
         adc #0
-        sta $22
+        sta dst_loc_hi
 
-        lda $23
+        lda dst2_loc_lo
         clc
         adc x_pos
-        sta $23
-        lda $24
+        sta dst2_loc_lo
+        lda dst2_loc_hi
         adc #0
-        sta $24
+        sta dst2_loc_hi
 
         ldy #$00
 
@@ -662,11 +664,11 @@ write_text:
         rts
 
 !write_char:
-        sta ($21),y
+        sta (dst_loc_lo),y
 
         // colour
         lda arg_1
-        sta ($23),y
+        sta (dst2_loc_lo),y
 
         iny
         jmp !write_write-
