@@ -17,10 +17,15 @@
 
         * = $0801 "Main Program"
 start:
-        // lda #$35
-        // sta $01
+        //lda #$37
+        //sta $01
 
         SetScreenAndBorderColor($00)
+
+        // init indecies
+        lda #$00
+        sta $03
+
         lda #$00
         jsr music
         sei
@@ -65,7 +70,10 @@ irq1:
         jsr music+3
         SetBorderColor(0)
         jsr copy_frame_lut
+        SetBorderColor(1)
+        jsr cycle_colours
         SetBorderColor(0)
+
 
         // next interrupt
         lda #<irq2
@@ -495,6 +503,9 @@ title:
         sta $20
         jsr write_text
 
+        rts
+
+cycle_colours:
         // x
         lda #$09
         sta $18
@@ -504,11 +515,21 @@ title:
         sta $19
 
         // length
-        lda #5
+        lda #25
         sta $20
 
         // colour
-        lda #$02
+        ldx $03
+        inx
+        stx $03
+        cpx text_colour_lut_length
+        bne !write+
+
+        lda #$00
+        sta $03
+
+!write:
+        lda text_colour_lut,x
         sta $21
         jsr write_text_colours
 
@@ -729,9 +750,13 @@ colourbar_lut_2:
         .byte 1, 7, 13, 13, 3, 3, 15, 5, 5, 10, 14, 14, 12, 8, 8, 4, 2, 2, 11, 9, 9, 6
 
 
-old_colour_lut:
+text_colour_lut:
         .byte 6, 9, 11, 2, 4, 8, 12, 14, 10, 5, 15, 3, 7, 13, 1
         .byte 1, 13, 7, 3, 15, 5, 10, 14, 12, 8, 4, 2, 11, 9, 6
+
+text_colour_lut_length:
+        .byte 30
+
 
 text_press_fire:
         .import binary "data/press-fire-text.bin"
