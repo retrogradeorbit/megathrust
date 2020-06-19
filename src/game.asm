@@ -15,6 +15,13 @@
         .var _X = $3
         .var wOffs = $fd
 
+        .var    star_x_sub = $7f
+        .var    star_x_lo = $80
+        .var    star_x_hi = $81
+
+        .var    star_y_sub = $82
+        .var    star_y = $83
+
 silence_sid:
         // silence SID
         lda #$00
@@ -105,6 +112,18 @@ start_game:
 
         jsr clear_bitmap
         jsr reset_bitmap_colours
+
+        // star starting pos
+        lda #<200
+        sta star_x_lo
+        lda #>200
+        sta star_x_hi
+        lda #100
+        sta star_y
+
+        lda #0
+        sta star_x_sub
+        sta star_y_sub
 
         // star interrupt
         sei
@@ -208,254 +227,60 @@ clear_byte:
 ortab:
         .byte 128, 64, 32, 16, 8, 4, 2, 1
 
-plot_pixel:
-        .var xpos = 128
-        .var ypos = 200
-
-        lda #ypos
-
-        // ypos / 8
-        lsr
-        lsr
-        lsr
-        tax
-
-        // yremain
-        and #7
-        sta $44
-
-        // lookup line start
-        lda y_char_start_lo,y
-        sta $40
-        lda y_char_start_hi,y
-        sta $41
-
-        // xpos / 8
-        lda #xpos
-        lsr
-        lsr
-        lsr
-        tax
-
-        // xremain
-        and #7
-        sta $45
-
-        // lookup byte offset
-        lda x_char_start_lo,y
-        sta $42
-        lda x_char_start_hi,y
-        sta $43
-
-
-
-
-
-
-
-y_char_start_lo:
-        .byte <$6000+(0*40*8)
-        .byte <$6000+(1*40*8)
-        .byte <$6000+(2*40*8)
-        .byte <$6000+(3*40*8)
-        .byte <$6000+(4*40*8)
-        .byte <$6000+(5*40*8)
-        .byte <$6000+(6*40*8)
-        .byte <$6000+(7*40*8)
-        .byte <$6000+(8*40*8)
-        .byte <$6000+(9*40*8)
-        .byte <$6000+(10*40*8)
-        .byte <$6000+(11*40*8)
-        .byte <$6000+(12*40*8)
-        .byte <$6000+(13*40*8)
-        .byte <$6000+(14*40*8)
-        .byte <$6000+(15*40*8)
-        .byte <$6000+(16*40*8)
-        .byte <$6000+(17*40*8)
-        .byte <$6000+(18*40*8)
-        .byte <$6000+(19*40*8)
-        .byte <$6000+(20*40*8)
-        .byte <$6000+(21*40*8)
-        .byte <$6000+(22*40*8)
-        .byte <$6000+(23*40*8)
-        .byte <$6000+(24*40*8)
-        .byte <$6000+(25*40*8)
-
-y_char_start_hi:
-        .byte >$6000+(0*40*8)
-        .byte >$6000+(1*40*8)
-        .byte >$6000+(2*40*8)
-        .byte >$6000+(3*40*8)
-        .byte >$6000+(4*40*8)
-        .byte >$6000+(5*40*8)
-        .byte >$6000+(6*40*8)
-        .byte >$6000+(7*40*8)
-        .byte >$6000+(8*40*8)
-        .byte >$6000+(9*40*8)
-        .byte >$6000+(10*40*8)
-        .byte >$6000+(11*40*8)
-        .byte >$6000+(12*40*8)
-        .byte >$6000+(13*40*8)
-        .byte >$6000+(14*40*8)
-        .byte >$6000+(15*40*8)
-        .byte >$6000+(16*40*8)
-        .byte >$6000+(17*40*8)
-        .byte >$6000+(18*40*8)
-        .byte >$6000+(19*40*8)
-        .byte >$6000+(20*40*8)
-        .byte >$6000+(21*40*8)
-        .byte >$6000+(22*40*8)
-        .byte >$6000+(23*40*8)
-        .byte >$6000+(24*40*8)
-        .byte >$6000+(25*40*8)
-
-x_char_start_lo:
-        .byte <0*8
-        .byte <1*8
-        .byte <2*8
-        .byte <3*8
-        .byte <4*8
-        .byte <5*8
-        .byte <6*8
-        .byte <7*8
-        .byte <8*8
-        .byte <9*8
-        .byte <10*8
-        .byte <11*8
-        .byte <12*8
-        .byte <13*8
-        .byte <14*8
-        .byte <15*8
-        .byte <16*8
-        .byte <17*8
-        .byte <18*8
-        .byte <19*8
-        .byte <20*8
-        .byte <21*8
-        .byte <22*8
-        .byte <23*8
-        .byte <24*8
-        .byte <25*8
-        .byte <26*8
-        .byte <27*8
-        .byte <28*8
-        .byte <29*8
-        .byte <30*8
-        .byte <31*8
-        // now over 256
-        .byte <32*8
-        .byte <33*8
-        .byte <34*8
-        .byte <35*8
-        .byte <36*8
-        .byte <37*8
-        .byte <38*8
-        .byte <39*8
-
-x_char_start_hi:
-        .byte >0*8
-        .byte >1*8
-        .byte >2*8
-        .byte >3*8
-        .byte >4*8
-        .byte >5*8
-        .byte >6*8
-        .byte >7*8
-        .byte >8*8
-        .byte >9*8
-        .byte >10*8
-        .byte >11*8
-        .byte >12*8
-        .byte >13*8
-        .byte >14*8
-        .byte >15*8
-        .byte >16*8
-        .byte >17*8
-        .byte >18*8
-        .byte >19*8
-        .byte >20*8
-        .byte >21*8
-        .byte >22*8
-        .byte >23*8
-        .byte >24*8
-        .byte >25*8
-        .byte >26*8
-        .byte >27*8
-        .byte >28*8
-        .byte >29*8
-        .byte >30*8
-        .byte >31*8
-        // now over 256
-        .byte >32*8
-        .byte >33*8
-        .byte >34*8
-        .byte >35*8
-        .byte >36*8
-        .byte >37*8
-        .byte >38*8
-        .byte >39*8
-
-
-
-
-
-
-        jsr clear_screen
-
-        // all white
-        lda #$01
-        jsr fill_screen_colour
-
-
-        // clear char
-        ldx #$00
-        lda #$00
-!loop:
-        sta star_first_char_def,x
-        inx
-        cpx $08
-        bmi !loop-
-
-        // plot star char def
-        lda #$01
-        sta star_first_char_def
-
-        // draw star
-        lda #<$0400+40*12+20
-        sta $40
-        lda #>$0400+40*12+20
-        sta $41
-
-        lda #star_first_char
-        sta $0400+40*12+20
-
-        // star interrupt
-        sei
-        lda #%00000001
-        sta interrupt_control
-        lda #<star_irq
-        sta irq_low
-        lda #>star_irq
-        sta irq_high
-        lda #$80
-        sta raster_line
-        cli
-
-        jmp *
-
 star_irq:
         SetBorderColor(13)
 
-        lda #<100
+        // x
+        lda star_x_lo
         sta _X
-        lda #>100
+        lda star_x_hi
         sta _X+1
-        lda #100
+
+        // y
+        lda star_y
+        sta _Y
+
+        jsr clear_byte
+
+        // move
+        clc
+        lda star_x_sub
+        adc #10
+        sta star_x_sub
+        lda star_x_lo
+        adc #0
+        sta star_x_lo
+        lda star_x_hi
+        adc #0
+        sta star_x_hi
+
+        sec
+        lda star_y_sub
+        sbc #50
+        sta star_y_sub
+        lda star_y
+        sbc #0
+        sta star_y
+
+        // x
+        lda star_x_lo
+        sta _X
+        lda star_x_hi
+        sta _X+1
+
+        // y
+        lda star_y
         sta _Y
 
         jsr plot
 
+
+
         jmp !done+
+
+
+
+
 
         // star num
         ldy #$00
@@ -490,7 +315,7 @@ star_irq:
         sta star_first_char_def
 
 !done:
-        SetBorderColor(0)
+        SetBorderColor(11)
 
         inc interrupt_status
 
