@@ -524,15 +524,15 @@ title:
 cycle_colours:
         // x
         lda #$09
-        sta $18
+        sta x_pos
 
         // y
         lda #18
-        sta $19
+        sta y_pos
 
         // length
         lda #25
-        sta $20
+        sta arg_1
 
         // colour
         ldx text_colour_index
@@ -546,7 +546,7 @@ cycle_colours:
 
 !write:
         lda text_colour_lut,x
-        sta $21
+        sta arg_2
         jsr write_text_colours
 
         rts
@@ -678,32 +678,32 @@ write_text_colours:
         // x: $18. y $19. length $20. colour $21.
         // calc destinations $22/$23
 
-        ldx $19
+        ldx y_pos
         lda colour_rows_lo,x
-        sta $22
+        sta dst_loc_lo
         lda colour_rows_hi,x
-        sta $23
+        sta dst_loc_hi
 
         // xpos
-        lda $22
+        lda dst_loc_lo
         clc
-        adc $18
-        sta $22
-        lda $23
+        adc x_pos
+        sta dst_loc_lo
+        lda dst_loc_hi
         adc #0
-        sta $23
+        sta dst_loc_hi
 
         ldy #$00
 
 !write_write:
-        cpy $20
+        cpy arg_1
         bne !write_char+
         rts
 
 !write_char:
         // colour
-        lda $21
-        sta ($22),y
+        lda arg_2
+        sta (dst_loc_lo),y
 
         iny
         jmp !write_write-
