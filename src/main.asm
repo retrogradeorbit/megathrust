@@ -504,9 +504,9 @@ title:
 
         // PRESS FIRE
         lda #<text_press_fire
-        sta $16
+        sta src_loc_lo
         lda #>text_press_fire
-        sta $17
+        sta src_loc_hi
 
         // x
         lda #$09
@@ -624,10 +624,23 @@ draw_char_block:
 
         rts
 
-write_text:
-        // src $16/$17. x: $18. y $19. colour $20
-        // calc destinations $21-$24
+/*
+write_text
+----------
+copy a text string from the wrong onto the screen. Also sets the colour.
+text is composed of byte values for chars. end of string is marked by 0xff
 
+input:
+        src_loc_lo, src_loc_hi  the source location of the text
+        x_pos   the x position on the screen to write the text
+        y_pos   the y position on the screen
+        arg_1   the *colour* byte to write
+
+uses:
+        dst_loc_lo, dst_loc_hi        the destination location for screen char writes
+        dst2_loc_lo, dst2_loc_hi      the destination location for colour values
+*/
+write_text:
         ldx y_pos
         lda screen_rows_lo,x
         sta dst_loc_lo
@@ -658,7 +671,7 @@ write_text:
         ldy #$00
 
 !write_write:
-        lda ($16),y
+        lda (src_loc_lo),y
         cmp #$ff
         bne !write_char+
         rts
