@@ -110,20 +110,38 @@ start_game:
         lda #%00000010
         sta $dd00
 
+        SetBorderColor(11)
+
         jsr clear_bitmap
         jsr reset_bitmap_colours
 
         // star starting pos
-        lda #<200
+        lda #<3
         sta star_x_lo
-        lda #>200
+        lda #>3
         sta star_x_hi
-        lda #100
+        lda #3
         sta star_y
 
         lda #0
         sta star_x_sub
         sta star_y_sub
+
+        // x
+        lda star_x_lo
+        sta _X
+        lda star_x_hi
+        sta _X+1
+
+        // y
+        lda star_y
+        sta _Y
+
+        jsr plot
+
+
+
+        //jmp *
 
         // star interrupt
         sei
