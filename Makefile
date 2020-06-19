@@ -14,7 +14,7 @@ clean:
 
 compile: build/megathrust.prg
 
-build/megathrust-full.prg: src/main.asm
+build/megathrust-full.prg: src/main.asm src/game.asm
 	-mkdir build
 	java -jar compiler/KickAss.jar -vicesymbols -o build/megathrust-full.prg src/main.asm
 

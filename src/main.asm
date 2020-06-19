@@ -11,9 +11,9 @@
         .var border_colour = $d020
         .var screen_colour = $d021
 
-        // kernel
-        .var normal_interrupt = $ea31
-        .var normal_interrupt_no_keyboard_scan = $ea81
+        .var joy1 = $dc01
+        .var joy2 = $dc00
+        .var fire = %00010000
 
         // ZP layout
         .var text_colour_index = $02
@@ -31,7 +31,7 @@
         .var arg_2 = $25
         .var arg_3 = $26
 
-
+#import "game.asm"
 
         * = $0801 "Main Program"
 start:
@@ -81,7 +81,18 @@ start:
         asl interrupt_status
         cli
 
-        jmp *
+!fire_test:
+        lda joy1
+        and #fire
+        cmp #0
+        bne !skip+
+        jmp start_game
+!skip:
+        lda joy2
+        and #fire
+        cmp #0
+        bne !fire_test-
+        jmp start_game
 
 irq1:
         SetBorderColor(0)
