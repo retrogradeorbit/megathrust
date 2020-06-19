@@ -15,6 +15,22 @@
         .var normal_interrupt = $ea31
         .var normal_interrupt_no_keyboard_scan = $ea81
 
+        // ZP layout
+        .var text_colour_index = $02
+        .var src_loc_lo = $14
+        .var src_loc_hi = $15
+        .var dst_loc_lo = $16
+        .var dst_loc_hi = $17
+        .var x_pos = $18
+        .var y_pos = $19
+        .var width = $20
+        .var height = $21
+        .var arg_1 = $22
+        .var arg_2 = $23
+        .var arg_3 = $24
+
+
+
         * = $0801 "Main Program"
 start:
         //lda #$37
@@ -24,7 +40,7 @@ start:
 
         // init indecies
         lda #$00
-        sta $03
+        sta text_colour_index
 
         lda #$00
         jsr music
@@ -432,54 +448,54 @@ title:
         // MEGA
         // width
         lda mega_charmap
-        sta $10
+        sta width
 
         // height
         lda mega_charmap+1
-        sta $11
+        sta height
 
         // source block location
         lda #<mega_charmap
         clc
         adc #$02 // first 2 bytes are width and height
-        sta $12
+        sta src_loc_lo
 
         lda #>mega_charmap
         adc #$00 // add carry in case 256 byte boundary crossing
-        sta $13
+        sta src_loc_hi
 
         // screen destination location
         lda #$04
-        sta $15
+        sta dst_loc_hi
         lda #$84
-        sta $14
+        sta dst_loc_lo
 
         jsr draw_char_block
 
         // THRUST
         // width
         lda thrust_charmap
-        sta $10
+        sta width
 
         // height
         lda thrust_charmap+1
-        sta $11
+        sta height
 
         // source block location
         lda #<thrust_charmap
         clc
         adc #$02 // first 2 bytes are width and height
-        sta $12
+        sta src_loc_lo
 
         lda #>thrust_charmap
         adc #$00 // add carry in case 256 byte boundary crossing
-        sta $13
+        sta src_loc_hi
 
         // screen destination location
         lda #$05
-        sta $15
+        sta dst_loc_hi
         lda #$4a
-        sta $14
+        sta dst_loc_lo
 
         jsr draw_char_block
 
@@ -519,14 +535,14 @@ cycle_colours:
         sta $20
 
         // colour
-        ldx $03
+        ldx text_colour_index
         inx
-        stx $03
+        stx text_colour_index
         cpx text_colour_lut_length
         bne !write+
 
         lda #$00
-        sta $03
+        sta text_colour_index
 
 !write:
         lda text_colour_lut,x
@@ -575,33 +591,33 @@ draw_char_block:
 !loop_line:
         ldy #$0
 !read:
-        lda ($12),y
-        sta ($14),y
+        lda (src_loc_lo),y
+        sta (dst_loc_lo),y
         iny
-        cpy $10
+        cpy width
         bmi !read-
 
         // add one row to all the locs
         // add width to lda
-        lda $12
+        lda src_loc_lo
         clc
-        adc $10
-        sta $12
-        lda $13
+        adc width
+        sta src_loc_lo
+        lda src_loc_hi
         adc #$00
-        sta $13
+        sta src_loc_hi
 
         // add 40 to sta
-        lda $14
+        lda dst_loc_lo
         clc
         adc #40
-        sta $14
-        lda $15
+        sta dst_loc_lo
+        lda dst_loc_hi
         adc #$00
-        sta $15
+        sta dst_loc_hi
 
         inx
-        cpx $11
+        cpx height
         bmi !loop_line-
 
         rts
