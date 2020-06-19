@@ -610,38 +610,15 @@ write_text:
         // src $16/$17. x: $18. y $19. colour $20
         // calc destinations $21-$24
 
-        lda #<$0400
+        ldx $19
+        lda screen_rows_lo,x
         sta $21
-        lda #>$0400
+        lda screen_rows_hi,x
         sta $22
-
-        lda #<$d800
+        lda colour_rows_lo,x
         sta $23
-        lda #>$d800
+        lda colour_rows_hi,x
         sta $24
-
-        ldx #$00
-!loop_y:
-        // ypos
-        lda $21
-        clc
-        adc #40
-        sta $21
-        lda $22
-        adc #0
-        sta $22
-
-        lda $23
-        clc
-        adc #40
-        sta $23
-        lda $24
-        adc #0
-        sta $24
-
-        inx
-        cpx $19
-        bmi !loop_y-
 
         // xpos
         lda $21
@@ -691,7 +668,6 @@ write_text_colours:
         lda colour_rows_hi,x
         sta $23
 
-!loop_y:
         // xpos
         lda $22
         clc
