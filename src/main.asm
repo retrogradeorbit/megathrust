@@ -439,6 +439,22 @@ fill_screen:
 
         rts
 
+fill_screen_colour:
+        ldx #$00
+
+!loop:
+        // colour ram
+        sta $d800, x
+        sta $d8fa, x
+        sta $d9f4, x
+        sta $daee, x
+
+        inx
+        cpx #$fa
+        bne !loop-
+
+        rts
+
         // ldx start poke val
         // ldy start offset
 printer:
