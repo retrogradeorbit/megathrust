@@ -82,6 +82,9 @@ start:
         asl interrupt_status
         cli
 
+        // TEST AUTOSTART
+        //jmp start_game
+
 !fire_test:
         lda joy1
         and #fire
@@ -99,11 +102,8 @@ irq1:
         SetBorderColor(0)
         jsr music+3
         SetBorderColor(0)
-        jsr copy_frame_lut
-        SetBorderColor(0)
         jsr cycle_colours
         SetBorderColor(0)
-
 
         // next interrupt
         lda #<irq2
@@ -111,7 +111,7 @@ irq1:
         lda #>irq2
         sta irq_high
 
-        lda #91-24
+        lda #91-24+8
         sta raster_line
 
         // ack interrupt
@@ -126,7 +126,7 @@ irq1:
         rti
 
 irq2:
-        lda #93-24
+        lda #93-24+8
         sta raster_line
         lda #<irq3
         sta irq_low
@@ -310,24 +310,6 @@ colour_bar_loop:
         jsr colour_bar
 
         //badline
-        inx
-        lda colourbar_lut,x
-        sta screen_colour
-        nop
-        nop
-        nop
-        nop
-        nop
-
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-        jsr colour_bar
-
-        // badline
         inx
         lda colourbar_lut,x
         sta screen_colour
@@ -581,41 +563,6 @@ cycle_colours:
 
         rts
 
-copy_lut_1:
-        ldx #48
-cl1_loop:
-        lda colourbar_lut_1,x
-        sta colourbar_lut,x
-        dex
-        cpx #$ff
-        bpl cl1_loop
-        rts
-
-copy_lut_2:
-        ldx #48
-cl2_loop:
-        lda colourbar_lut_2,x
-        sta colourbar_lut,x
-        dex
-        cpx #$ff
-        bpl cl2_loop
-        rts
-
-frame_num:
-        .byte 0
-
-copy_frame_lut:
-        inc frame_num
-        lda frame_num
-        and #$01
-        cmp #$01
-        bne cfl_jmp
-        jsr copy_lut_1
-        rts
-cfl_jmp:
-        jsr copy_lut_2
-        rts
-
 draw_char_block:
         ldx #$0
 !loop_line:
@@ -762,23 +709,7 @@ write_text_colours:
 
         * = $2000 "colour LUT"
 colourbar_lut:
-        .byte 6, 9, 11, 2, 4, 8, 12, 14, 10, 5, 15, 3, 7, 13, 1
-        .byte 1, 13, 7, 3, 15, 5, 10, 14, 12, 8, 4, 2, 11, 9, 6
-        .byte 6, 9, 11, 2, 4, 8, 12, 14, 10, 5, 15, 3, 7, 13, 1
-        .byte 1, 13, 7, 3, 15, 5, 10, 14, 12, 8, 4, 2, 11, 9, 6
-        .byte 6, 9, 11, 2, 4, 8, 12, 14, 10, 5, 15, 3, 7, 13, 1
-        .byte 1, 13, 7, 3, 15, 5, 10, 14, 12, 8, 4, 2, 11, 9, 6
-
-colourbar_lut_1:
-        .byte 6, 6, 9, 11, 11, 2, 4, 4, 8, 12, 12, 14, 10, 10, 5, 15, 15, 3, 13, 7, 7, 1
-        .byte 1, 7, 7, 13, 3, 15, 15, 5, 10, 10, 14, 12, 12, 8, 4, 4, 2, 11, 11, 9, 6, 6
-
-
-
-colourbar_lut_2:
-        .byte 6, 9, 9, 11, 2, 2, 4, 8, 8, 12, 14, 14, 10, 5, 5, 15, 3, 3, 13, 13, 7, 1
-        .byte 1, 7, 13, 13, 3, 3, 15, 5, 5, 10, 14, 14, 12, 8, 8, 4, 2, 2, 11, 9, 9, 6
-
+        .byte 0, 6, 6, 6, 14, 6, 14, 14, 3, 14, 3, 3, 13, 3, 13, 13, 1, 1, 1, 13, 13, 3, 13, 3, 3, 14, 3, 14, 14, 6, 14, 6, 6, 0, 6
 
 text_colour_lut:
         .byte 6, 9, 11, 2, 4, 8, 12, 14, 10, 5, 15, 3, 7, 13, 1
